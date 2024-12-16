@@ -36,6 +36,12 @@ void push_operator(char *operators,int *operator_top,char operator){
     operators[++(*operator_top)]=operator;
 
 }
+int pop_number(int *numbers,int *number_top){
+    return numbers[(*number_top)--];
+}
+int pop_operator(char *opertaors,int *operator_top){
+    return opertaors[(*operator_top)--];
+}
 
 
 int evaluate_expression(char* expression) {
@@ -69,14 +75,14 @@ int evaluate_expression(char* expression) {
                 char op = operators[operator_top--];
                 push_number(numbers,&number_top, apply_operation(a, b, op));
             }
-            operator_top--; 
+            pop_operator(operators,&operator_top);
         }
        
         else {
             while (operator_top >= 0 && precedence(operators[operator_top]) >= precedence(expression[i])) {
-                int b = numbers[number_top--];
-                int a = numbers[number_top--];
-                char op = operators[operator_top--];
+                int b = pop_number(numbers,&number_top);
+                int a = pop_number(numbers,&number_top);
+                char op = pop_operator(operators,&operator_top);
                 push_number(numbers,&number_top, apply_operation(a, b, op));
             }
             push_operator(operators,&operator_top,expression[i]);
@@ -85,9 +91,9 @@ int evaluate_expression(char* expression) {
 
    
     while (operator_top >= 0) {
-        int b = numbers[number_top--];
-        int a = numbers[number_top--];
-        char op = operators[operator_top--];
+        int b = pop_number(numbers,&number_top);
+        int a = pop_number(numbers,&number_top);
+        char op = pop_operator(operators,&operator_top);
         push_number(numbers,&number_top, apply_operation(a, b, op));
     }
 
