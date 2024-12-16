@@ -8,12 +8,18 @@ typedef struct {
     int age;
 } User;
 
-void create_user() {
-    FILE* file = fopen("users.txt", "a");
-    if (!file) {
-        printf("Error opening file\n");
-        return;
+FILE* open_file(char* filename,char* type){
+    FILE* file=fopen(filename,type);
+    if(!file){
+        printf("Error opening file");
+       return 0;
     }
+    return file;
+}
+
+void create_user() {
+    FILE* file = open_file("users.txt", "a");
+    
     User user;
     printf("Enter ID: ");
     scanf("%d", &user.id);
@@ -30,11 +36,8 @@ void create_user() {
 
 void read_users() {
     User user;
-    FILE* file = fopen("users.txt", "r");
-    if (!file) {
-        printf("Error\n");
-        return;
-    }
+    FILE* file = open_file("users.txt", "r");
+  
     printf("| ID | Name                 | Age |\n");
     while (fscanf(file, "%d %49s %d", &user.id, user.name, &user.age) != EOF) {
         printf("| %2d | %-20s | %3d |\n", user.id, user.name, user.age);
@@ -43,17 +46,14 @@ void read_users() {
 }
 
 void update_user() {
-    FILE* file = fopen("users.txt", "r");
-    if (!file) {
-        printf("Error opening file\n");
-        return;
-    }
-    FILE* temp = fopen("temp.txt", "w");
-    if (!temp) {
-        fclose(file);
-        printf("Error creating file\n");
-        return;
-    }
+    FILE* file = open_file("users.txt", "r");
+    
+    FILE* temp = open_file("temp.txt", "w");
+    // if (!temp) {
+    //     fclose(file);
+    //     printf("Error creating file\n");
+    //     return;
+    // }
     int id, found = 0;
     User user;
     printf("Enter ID to update: ");
@@ -81,17 +81,14 @@ void update_user() {
 }
 
 void delete_user() {
-    FILE* file = fopen("users.txt", "r");
-    if (!file) {
-        printf("Error opening file\n");
-        return;
-    }
-    FILE* temp = fopen("temp.txt", "w");
-    if (!temp) {
-        fclose(file);
-        printf("Error creating file\n");
-        return;
-    }
+    FILE* file = open_file("users.txt", "r");
+   
+    FILE* temp = open_file("temp.txt", "w");
+    // if (!temp) {
+    //     fclose(file);
+    //     printf("Error creating file\n");
+    //     return;
+    // }
     int id, found = 0;
     User user;
     printf("Enter ID : ");
