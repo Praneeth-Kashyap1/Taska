@@ -113,7 +113,8 @@ void delete_user() {
 
 int main() {
     int choice;
-    while (1) {
+    int counter=3;
+    while (counter>0) {
         printf("\n1. Create User\n2. Read Users\n3. Update User\n4. Delete User\n5. Exit\nEnter your choice: ");
         scanf("%d", &choice);
         getchar(); 
@@ -123,7 +124,7 @@ int main() {
             case 3: update_user(); break;
             case 4: delete_user(); break;
             case 5: printf("Exiting...\n"); return 0;
-            default: printf("Invalid choice\n");
+            default: printf("Invalid choice\n",--counter);
         }
     }
 }
