@@ -28,60 +28,70 @@ int apply_operation(int a, int b, char op) {
 }
 
 
+void push_number(int *numbers,int *number_top,int number){
+    numbers[++(*number_top)]=number;
+}
+
+void push_operator(char *operators,int *operator_top,char operator){
+    operators[++(*operator_top)]=operator;
+
+}
+
+
 int evaluate_expression(char* expression) {
-    int values[100]; 
-    int value_top = -1;
-    char ops[100];   
-    int ops_top = -1;
+    int numbers[100]; 
+    int number_top = -1;
+    char operators[100];   
+    int operator_top = -1;
 
     for (int i = 0; expression[i]; i++) {
         if (isspace(expression[i])) continue;
 
        
         if (isdigit(expression[i])) {
-            int value = 0;
+            int digit = 0;
             while (i < strlen(expression) && isdigit(expression[i])) {
-                value = value * 10 + (expression[i] - '0');
+                digit = digit * 10 + (expression[i] - '0');
                 i++;
             }
-            values[++value_top] = value;
+            push_number(numbers,&number_top,digit);
             i--; 
         }
        
         else if (expression[i] == '(') {
-            ops[++ops_top] = expression[i];
+           push_operator(operators,&operator_top,expression[i]);
         }
        
         else if (expression[i] == ')') {
-            while (ops_top >= 0 && ops[ops_top] != '(') {
-                int b = values[value_top--];
-                int a = values[value_top--];
-                char op = ops[ops_top--];
-                values[++value_top] = apply_operation(a, b, op);
+            while (operator_top >= 0 && operators[operator_top] != '(') {
+                int b = numbers[number_top--];
+                int a = numbers[number_top--];
+                char op = operators[operator_top--];
+                push_number(numbers,&number_top, apply_operation(a, b, op));
             }
-            ops_top--; 
+            operator_top--; 
         }
        
         else {
-            while (ops_top >= 0 && precedence(ops[ops_top]) >= precedence(expression[i])) {
-                int b = values[value_top--];
-                int a = values[value_top--];
-                char op = ops[ops_top--];
-                values[++value_top] = apply_operation(a, b, op);
+            while (operator_top >= 0 && precedence(operators[operator_top]) >= precedence(expression[i])) {
+                int b = numbers[number_top--];
+                int a = numbers[number_top--];
+                char op = operators[operator_top--];
+                push_number(numbers,&number_top, apply_operation(a, b, op));
             }
-            ops[++ops_top] = expression[i];
+            push_operator(operators,&operator_top,expression[i]);
         }
     }
 
    
-    while (ops_top >= 0) {
-        int b = values[value_top--];
-        int a = values[value_top--];
-        char op = ops[ops_top--];
-        values[++value_top] = apply_operation(a, b, op);
+    while (operator_top >= 0) {
+        int b = numbers[number_top--];
+        int a = numbers[number_top--];
+        char op = operators[operator_top--];
+        push_number(numbers,&number_top, apply_operation(a, b, op));
     }
 
-    return values[0]; 
+    return numbers[0]; 
 }
 
 int main() {
@@ -89,8 +99,11 @@ int main() {
     printf("Enter the expression: ");
     fgets(expression, 100, stdin);
 
+    expression[strcspn(expression,"\n")]=0;
+    //!isspace(expression[i])
+
     for (int i = 0; expression[i]; i++) {
-        if (!isdigit(expression[i]) && !isspace(expression[i]) && expression[i] != '+' &&
+        if (!(expression[i]>='0' && expression[i]<='9') && expression[i]!=' ' && expression[i] != '+' &&
             expression[i] != '-' && expression[i] != '*' && expression[i] != '/' &&
             expression[i] != '(' && expression[i] != ')') {
             printf("Error: Invalid expression.\n");
